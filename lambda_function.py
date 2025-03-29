@@ -17,12 +17,6 @@ def lambda_handler(event, context):
         headers_in = event['headers']
         body = event.get('body', None)
 
-        print(f"Método HTTP: {http_method}")
-        print(f"Ruta: {path}")
-        print(f"Headers recibidos: {json.dumps(headers_in)}")
-        print(f"Cuerpo recibido: {body}")
-        print(f"ip_rate_limits al inicio de la invocación: {ip_rate_limits}") # Ver el estado del diccionario
-
         # Rate Limiting por IP (Implementación básica en memoria)
         now = time.time()
         print(f"Tiempo actual: {now}")
