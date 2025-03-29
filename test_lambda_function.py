@@ -1,84 +1,69 @@
-import unittest
-import json
-from lambda_function import lambda_handler, ip_rate_limits, REQUESTS_PER_MINUTE_IP
+import pytest
+from unittest.mock import patch
+import time
+from lambda_function import lambda_handler, limits, request_counts
 
-class TestRateLimiting(unittest.TestCase):
+# Reiniciar los contadores de requests antes de cada test
+@pytest.fixture(autouse=True)
+def reset_request_counts():
+    request_counts.clear()
 
-    def setUp(self):
-        # Establecer un límite de velocidad bajo para facilitar la prueba
-        global REQUESTS_PER_MINUTE_IP
-        self.original_rate_limit = REQUESTS_PER_MINUTE_IP
-        REQUESTS_PER_MINUTE_IP = 2  # Por ejemplo, 2 requests por minuto
+def create_event(path):
+    return {"path": path, "httpMethod": "GET", "headers": {}, "requestContext": {"identity": {"sourceIp": "127.0.0.1"}}}
 
-        # Limpiar los contadores de rate limit antes de cada prueba
-        ip_rate_limits.clear()
+def test_root_path():
+    event = create_event("/")
+    response = lambda_handler(event, None)
+    assert response['statusCode'] == 200
+    assert "API Proxy is running" in response['body']
 
-    def tearDown(self):
-        # Restaurar el límite de velocidad original después de la prueba
-        global REQUESTS_PER_MINUTE_IP
-        REQUESTS_PER_MINUTE_IP = self.original_rate_limit
+@patch.dict('lambda_function.limits', {r"^/categories/.*$": 3})
+def test_categories_rate_limit_exceeded_mocked():
+    event = create_event("/categories/MLA1055")
+    limit = 3
 
-        # Limpiar los contadores de rate limit después de cada prueba
-        ip_rate_limits.clear()
+    for _ in range(limit):
+        response = lambda_handler(event, None)
+        assert response['statusCode'] == 200
 
-    def test_ip_rate_limit_exceeded(self):
-        mock_event = {
-            'path': '/categories/MLA1055',
-            'httpMethod': 'GET',
-            'headers': {'Host': 'localhost:8080', 'User-Agent': 'test', 'Accept': '*/*'},
-            'body': None,
-            'requestContext': {
-                'identity': {
-                    'sourceIp': '192.168.1.1'
-                }
-            }
-        }
-        context = {}
+    response = lambda_handler(event, None)
+    assert response['statusCode'] == 429
+    assert "Too Many Requests" in response['body']
 
-        # La primera solicitud debería pasar
-        response1 = lambda_handler(mock_event, context)
-        self.assertEqual(response1['statusCode'], 200)
+@patch.dict('lambda_function.limits', {r"^/categories/.*$": 3})
+def test_categories_rate_limit_reset_after_minute_mocked():
+    event = create_event("/categories/MLA1055")
+    limit = 3
 
-        # La segunda solicitud debería pasar
-        response2 = lambda_handler(mock_event, context)
-        self.assertEqual(response2['statusCode'], 200)
+    for _ in range(limit):
+        lambda_handler(event, None)
 
-        # La tercera solicitud desde la misma IP debería ser rate-limited
-        response3 = lambda_handler(mock_event, context)
-        self.assertEqual(response3['statusCode'], 429)
-        self.assertIn('Too Many Requests - IP Rate Limit', response3['body'])
+    time.sleep(61)
+    response = lambda_handler(event, None)
+    assert response['statusCode'] == 200
 
-    def test_ip_rate_limit_reset_after_minute(self):
-        mock_event = {
-            'path': '/categories/MLA1132',
-            'httpMethod': 'GET',
-            'headers': {'Host': 'localhost:8080', 'User-Agent': 'test', 'Accept': '*/*'},
-            'body': None,
-            'requestContext': {
-                'identity': {
-                    'sourceIp': '192.168.1.2'
-                }
-            }
-        }
-        context = {}
+@patch.dict('lambda_function.limits', {r"^/sites/MLA/categories$": 5})
+def test_sites_categories_rate_limit_exceeded_mocked():
+    event = create_event("/sites/MLA/categories")
+    limit = 5
 
-        # Dos solicitudes iniciales
-        response1 = lambda_handler(mock_event, context)
-        self.assertEqual(response1['statusCode'], 200)
-        response2 = lambda_handler(mock_event, context)
-        self.assertEqual(response2['statusCode'], 200)
+    for _ in range(limit):
+        response = lambda_handler(event, None)
+        assert response['statusCode'] == 200
 
-        # Tercera solicitud debería ser rate-limited
-        response3 = lambda_handler(mock_event, context)
-        self.assertEqual(response3['statusCode'], 429)
+    response = lambda_handler(event, None)
+    assert response['statusCode'] == 429
+    assert "Too Many Requests" in response['body']
 
-        # Esperar más de un minuto (61 segundos para asegurar que el contador se reinicie)
-        import time
-        time.sleep(61)
+@patch.dict('lambda_function.limits', {r"^/items/.*$": 2})
+def test_items_rate_limit_exceeded_mocked():
+    event = create_event("/items/MLA811601010")
+    limit = 2
 
-        # La siguiente solicitud después de esperar debería pasar
-        response4 = lambda_handler(mock_event, context)
-        self.assertEqual(response4['statusCode'], 200)
+    for _ in range(limit):
+        response = lambda_handler(event, None)
+        assert response['statusCode'] == 401
 
-if __name__ == '__main__':
-    unittest.main()
+    response = lambda_handler(event, None)
+    assert response['statusCode'] == 429
+    assert "Too Many Requests" in response['body']
