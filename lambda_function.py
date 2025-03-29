@@ -10,6 +10,12 @@ limits = {
 }
 request_counts = {}
 
+# Lista de IPs permitidas. Si esta lista está vacía, se permiten todas las IPs.
+ALLOWED_IPS = ["152.152.152.152", "127.0.0.1"]
+
+# Alternativamente, puedes usar una lista de IPs denegadas.
+DENIED_IPS = ["192.168.1.100", "10.0.0.5"]
+
 def is_rate_limited(path):
     now = time.time()
     for path_pattern, limit in limits.items():
@@ -27,6 +33,7 @@ def is_rate_limited(path):
 
 def lambda_handler(event, context):
     print(f"Evento recibido en lambda_handler: {json.dumps(event)}")
+    source_ip = event['requestContext']['identity']['sourceIp']
     path = event['path']
     http_method = event['httpMethod']
     headers_in = event['headers']
@@ -34,8 +41,27 @@ def lambda_handler(event, context):
 
     print(f"Método HTTP: {http_method}")
     print(f"Ruta: {path}")
+    print(f"IP de origen: {source_ip}")
     print(f"Headers recibidos: {json.dumps(headers_in)}")
     print(f"Cuerpo recibido: {body}")
+
+    # Lógica para restringir por IP
+    if ALLOWED_IPS:
+        if source_ip not in ALLOWED_IPS:
+            print(f"IP no permitida: {source_ip}")
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Forbidden - IP address not allowed'}),
+                'headers': {'Content-Type': 'application/json'}
+            }
+    elif DENIED_IPS:
+        if source_ip in DENIED_IPS:
+            print(f"IP denegada: {source_ip}")
+            return {
+                'statusCode': 403,
+                'body': json.dumps({'message': 'Forbidden - IP address denied'}),
+                'headers': {'Content-Type': 'application/json'}
+            }
 
     if is_rate_limited(path):
         return {
