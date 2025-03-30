@@ -8,5 +8,5 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1" # Reemplaza con la región de AWS donde quieres desplegar
+  region = "us-east-2" # Reemplaza con la región de AWS donde quieres desplegar
 }

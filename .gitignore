@@ -3,3 +3,7 @@
 .coverage
 htmlcov/** */
 __pycache__
+**/.terraform/**
+.terraform.*
+*.zip
+terraform.*
