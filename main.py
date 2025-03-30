@@ -1,6 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from lambda_function import lambda_handler  # Importa tu función Lambda
+from lambda_function import lambda_handler
+
 
 class LocalRequestHandler(BaseHTTPRequestHandler):
     def do_ANY(self):
@@ -15,7 +16,7 @@ class LocalRequestHandler(BaseHTTPRequestHandler):
         except Exception as e:
             print(f"Error al leer el cuerpo de la solicitud: {e}")
 
-        print(f"Path recibido: {path}") # Esta línea ahora debería estar bien
+        print(f"Path recibido: {path}")  # Esta línea ahora debería estar bien
 
         event = {
             'path': path,
@@ -29,7 +30,7 @@ class LocalRequestHandler(BaseHTTPRequestHandler):
             }
         }
 
-        context = {}  # Puedes simular un objeto de contexto si es necesario
+        context = {} 
 
         response = lambda_handler(event, context)
 
@@ -65,6 +66,7 @@ class LocalRequestHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.do_ANY()
 
+
 def run(server_class=HTTPServer, handler_class=LocalRequestHandler, port=8080):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
@@ -76,5 +78,7 @@ def run(server_class=HTTPServer, handler_class=LocalRequestHandler, port=8080):
     httpd.server_close()
     print('Servidor detenido.')
 
+
 if __name__ == '__main__':
     run()
+    
