@@ -27,7 +27,7 @@ Enlace a diagrama de arquitectura en Draw.io [API-proxy](https://viewer.diagrams
  
  Enlace al diagrama de clases en Draw.io [Diagram-Class](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&dark=auto#G1PZrMIHtngEEVH7ewyhYBag6lFQ5dyzc4)
 
-![Diagrama-de-Clases](assests/diagram-class.v1.jpg)
+![Diagrama-de-Clases](assets/diagram-class.v1.jpg)
 
 ### Uso con Docker para Pruebas locales 
 
