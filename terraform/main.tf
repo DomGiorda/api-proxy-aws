@@ -32,7 +32,7 @@ data "archive_file" "lambda_function_zip" {
 # Crear la función Lambda
 resource "aws_lambda_function" "api_proxy_lambda" {
   function_name    = "api-proxy-lambda"
-  runtime          = "python3.12" # Elige el runtime de Python que estés usando
+  runtime          = "python3.12"
   handler          = "lambda_function.lambda_handler"
   filename         = data.archive_file.lambda_function_zip.output_path
   source_code_hash = data.archive_file.lambda_function_zip.output_base64sha256
@@ -59,7 +59,7 @@ resource "aws_api_gateway_method" "proxy_method" {
   rest_api_id   = aws_api_gateway_rest_api.api_proxy_api.id
   resource_id   = aws_api_gateway_resource.proxy.id
   http_method   = "ANY"
-  authorization = "NONE" # Puedes cambiar esto a otro tipo de autorización si lo necesitas
+  authorization = "NONE"
 }
 
 # Integrar el método ANY con la función Lambda
@@ -67,7 +67,7 @@ resource "aws_api_gateway_integration" "lambda_integration" {
   rest_api_id             = aws_api_gateway_rest_api.api_proxy_api.id
   resource_id             = aws_api_gateway_resource.proxy.id
   http_method             = aws_api_gateway_method.proxy_method.http_method
-  integration_http_method = "POST" # API Gateway usa POST para invocar Lambdas con AWS_PROXY
+  integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.api_proxy_lambda.invoke_arn
 }
