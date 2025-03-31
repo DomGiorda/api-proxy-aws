@@ -10,11 +10,12 @@ limits = {
 }
 request_counts = {}
 
-# Lista de IPs permitidas. Si esta lista está vacía, se permiten todas las IPs.
+# Lista de IPs permitidas. Si esta lista esta vacía, se permiten todas las IPs.
 ALLOWED_IPS = ["152.152.152.152", "127.0.0.1"]
 
 # Alternativamente, puedes usar una lista de IPs denegadas.
 DENIED_IPS = ["192.168.1.100", "10.0.0.5"]
+
 
 def is_rate_limited(path):
     now = time.time()
@@ -31,6 +32,7 @@ def is_rate_limited(path):
                 return False
     return False
 
+
 def lambda_handler(event, context):
     print(f"Evento recibido en lambda_handler: {json.dumps(event)}")
     source_ip = event['requestContext']['identity']['sourceIp']
@@ -45,7 +47,7 @@ def lambda_handler(event, context):
     print(f"Headers recibidos: {json.dumps(headers_in)}")
     print(f"Cuerpo recibido: {body}")
 
-    # Lógica para restringir por IP
+    # Logica para restringir por IP
     if ALLOWED_IPS:
         if source_ip not in ALLOWED_IPS:
             print(f"IP no permitida: {source_ip}")
@@ -85,11 +87,11 @@ def lambda_handler(event, context):
         headers_to_forward = headers_in.copy()
         if 'Host' in headers_to_forward:
             del headers_to_forward['Host']
-        headers_to_forward['Host'] = 'api.mercadolibre.com' # Asegurar el Host correcto
+        headers_to_forward['Host'] = 'api.mercadolibre.com'
 
         print(f"Headers a reenviar: {json.dumps(headers_to_forward)}")
 
-        # Reenviar la solicitud
+        # Intentar la peticion
         try:
             response = requests.request(
                 method=http_method,
@@ -118,3 +120,4 @@ def lambda_handler(event, context):
                 'body': json.dumps({'message': f'Error al contactar la API: {e}'}),
                 'headers': {'Content-Type': 'application/json'}
             }
+       
