@@ -19,9 +19,16 @@ Los features del API Proxy son:
 
 
 ### Diagrama de arquitectura
-Enlace a diagrama en Draw.io [API-proxy](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&dark=auto#G1Z2xuJuKynGVkD0Pps90aQWFyK2bARxaA)
+Enlace a diagrama de arquitectura en Draw.io [API-proxy](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&dark=auto#G1Z2xuJuKynGVkD0Pps90aQWFyK2bARxaA)
 
 ![Diagrama de Arquitectura](assets/api-proxy-aws.v1.jpg)
+
+### Diagrama de clases
+ 
+ Enlace al diagrama de clases en Draw.io [Diagram-Class](https://viewer.diagrams.net/?tags=%7B%7D&lightbox=1&highlight=0000ff&edit=_blank&layers=1&nav=1&dark=auto#G1PZrMIHtngEEVH7ewyhYBag6lFQ5dyzc4)
+
+![Diagrama-de-Clases](assests/diagram-class.v1.jpg)
+
 ### Uso con Docker para Pruebas locales 
 
 El `Dockerfile` fue desarrollado para lograr una ejecucion local del API proxy. Para utilizarlo con el script `main.py` para desarrollo local:
