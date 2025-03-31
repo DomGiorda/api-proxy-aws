@@ -44,12 +44,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main' && startsWith(github.event.pull_request.head.ref, 'realese/')
+    if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main' && startsWith(github.event.pull_request.head.ref, 'release/')
     steps:
       - uses: actions/checkout@v4
       - name: Extract tag name
         id: extract_tag
-        run: echo "tag_name=$(echo '${{ github.event.pull_request.head.ref }}' | sed 's/^realese\///')" >> $GITHUB_OUTPUT
+        run: echo "tag_name=$(echo '${{ github.event.pull_request.head.ref }}' | sed 's/^release\///')" >> $GITHUB_OUTPUT
       - name: Create and push tag
         run: |
           git config --global user.name 'GitHub Actions'
