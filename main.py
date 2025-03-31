@@ -30,7 +30,7 @@ class LocalRequestHandler(BaseHTTPRequestHandler):
             }
         }
 
-        context = {} 
+        context = {}
 
         response = lambda_handler(event, context)
 
@@ -81,4 +81,3 @@ def run(server_class=HTTPServer, handler_class=LocalRequestHandler, port=8080):
 
 if __name__ == '__main__':
     run()
-    

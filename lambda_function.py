@@ -91,7 +91,7 @@ def lambda_handler(event, context):
 
         print(f"Headers a reenviar: {json.dumps(headers_to_forward)}")
 
-       #Intentar la peticion
+        # Intentar la peticion
         try:
             response = requests.request(
                 method=http_method,
@@ -120,4 +120,4 @@ def lambda_handler(event, context):
                 'body': json.dumps({'message': f'Error al contactar la API: {e}'}),
                 'headers': {'Content-Type': 'application/json'}
             }
-        
+       
