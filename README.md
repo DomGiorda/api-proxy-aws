@@ -44,7 +44,7 @@ El `Dockerfile` fue desarrollado para lograr una ejecucion local del API proxy. 
 2.  **Ejecuta el contenedor de Docker:** Una vez que la imagen se haya construido, puedes ejecutar un contenedor basado en esa imagen, exponiendo el puerto donde se ejecuta `main.py` (por defecto el puerto 8080):
 
     ```bash
-    docker run api-proxy -p 8080:8080
+    docker run -p 8080:8080 api-proxy:0.0.1 
     ```
 .
 
