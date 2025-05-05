@@ -14,8 +14,8 @@
       "runtime": "docker-cli"                 
     },
     "build": {
-      "containerApp": "true",
-      "dockerfile": "Dockerfile"
+      "containerApp": true,
+      "dockerfile": "Dockerfile",
       "package_type": "docker-image",           
       "build_command": "build" 
     },
