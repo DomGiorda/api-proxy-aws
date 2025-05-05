@@ -1,0 +1,63 @@
+{
+    "application": {
+      "name": "api-proxy-aws",      
+      "version": "1.0.0",
+      "stage": "dev",
+      "description": "api proxy with rate limiter"
+    },
+    "tech_stack": {
+      "language": "python",             
+      "language_version": "3.10",        
+      "framework": "flask", 
+      "build_tool": "docker",
+      "build_tool_version": "latest",      
+      "runtime": "docker-cli"                 
+    },
+    "build": {
+      "containerApp": "true",
+      "dockerfile": "Dockerfile"
+      "package_type": "docker-image",           
+      "build_command": "build" 
+    },
+    "test": {
+      "run_tests": true,               
+      "test_command": "mvn test",      
+      "coverage_tool": "jacoco",       
+      "quality_gate": {               
+        "enabled": true,
+        "tool": "sonarqube",
+        "project_key": "SONAR-METRICS-EXPORTER"
+      }
+    },
+    "artifacts": {
+      "publish_artifact": true,         
+      "repository_type": "maven",       
+      "repository_url": "https://your-artifact-repo.com/repository/maven-releases",
+      "credential_id": "jenkins-artifact-repo-credential-id"
+    },
+    "deployment": {
+      "deploy": false,                  
+      "target": "sonar-instance",          
+      "cloud_provider": "local",         
+      "service_type": "devops-tool",          
+      "mechanism": "sh",             
+      "manifest_path": "sh/scripts/deploy-plugin.sh", 
+      "credential_id": "jenkins-deployment-credential-id", 
+      "environment_vars": {           
+          "SPRING_PROFILES_ACTIVE": "dev"
+      }
+    },
+    "configuration": {
+      "method": "ssh-config",
+      "path": "sh/config"       
+    },
+    "health_check": {
+      "endpoint": "/api/prometheus/metrics",    
+      "method": "http_get",            
+      "port": 9000                 
+    },
+    "notifications": {
+      "on_success": ["email:dev-team@example.com", "slack:#success-channel"],
+      "on_failure": ["email:ops-team@example.com", "slack:#alerts-channel"]
+    }
+  }
