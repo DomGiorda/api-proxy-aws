@@ -1,8 +1,6 @@
-FROM python:3.13.2-alpine3.21
+FROM alpine:3.22
 
-WORKDIR /proxy
-COPY . /proxy
-RUN pip install -r requirements.txt
+WORKDIR /app
+COPY src/dotnet-hello.txt ./dotnet-hello.txt
 
-EXPOSE 8080
-CMD ["python", "main.py"]
+CMD ["sh", "-c", "cat dotnet-hello.txt && sleep 3600"]

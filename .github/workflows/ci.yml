@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate project manifest
+        run: |
+          test -f project.json
+          test -f Dockerfile
+      - name: Print seed metadata
+        run: |
+          echo "project=api-proxy-aws"
+          echo "runtime=dotnet"
+          echo "target=aks"
