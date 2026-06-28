@@ -1,0 +1,17 @@
+name: 'api-proxy-aws CI/CD'
+on:
+  push:
+    branches: [ main, staging ]
+  pull_request:
+    branches: [ main, staging]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+  packages: write
+
+jobs:
+  orchestrator:
+    uses: DomGiorda/gh-workflows/.github/workflows/orchestrator.yml@main
+    secrets: inherit
